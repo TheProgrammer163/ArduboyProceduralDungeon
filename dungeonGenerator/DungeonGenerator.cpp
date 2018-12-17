@@ -63,12 +63,7 @@ void Dungeon::loadRooms(uint16_t xpos, uint16_t ypos) {
             if ((i % 2) == (j % 2)) {
                 this->getRoomLayoutAt(i, j) = getRoomLayoutFromSeed(i, j);
             }
-        }
-    }
-    
-    for(uint16_t i = xpos; i < xpos + width; ++i) {
-        for(uint16_t j = ypos; j < ypos + height; ++j) {
-            if ((i % 2) != (j % 2)) {
+            else {
                 this->getRoomLayoutAt(i, j) = getRoomLayoutFromNeighbours(i, j);
             }
         }
