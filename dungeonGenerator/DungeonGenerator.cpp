@@ -8,7 +8,7 @@ extern Arduboy2 arduboy;
 
 
 RoomWallLayoutID Dungeon::getRoomLayoutFromSeed(uint16_t xpos, uint16_t ypos) {
-    int32_t currentSeed = (static_cast<int32_t>(xpos) << 16) | static_cast<int32_t>(ypos);
+    int32_t currentSeed = ((static_cast<int32_t>(xpos) << 16) | (static_cast<int32_t>(ypos) << 0));
     randomSeed(currentSeed);
 
     return static_cast<RoomWallLayoutID>(random(5, 10));
@@ -58,17 +58,17 @@ bool Dungeon::wallDown(uint16_t xpos, uint16_t ypos) {
 
 
 void Dungeon::loadRooms(uint16_t xpos, uint16_t ypos) {
-    for(uint16_t i = xpos; i < xpos + width; i++) {
-        for(uint16_t j = ypos; j < ypos + height; j++) {
-            if (i%2 == j%2) {
+    for(uint16_t i = xpos; i < xpos + width; ++i) {
+        for(uint16_t j = ypos; j < ypos + height; ++j) {
+            if ((i % 2) == (j % 2)) {
                 rooms[width * j + i] = getRoomLayoutFromSeed(i, j);
             }
         }
     }
     
-    for(uint16_t i = xpos; i < xpos + width; i++) {
-        for(uint16_t j = ypos; j < ypos + height; j++) {
-            if (i%2 != j%2) {
+    for(uint16_t i = xpos; i < xpos + width; ++i) {
+        for(uint16_t j = ypos; j < ypos + height; ++j) {
+            if ((i % 2) != (j % 2)) {
                 rooms[width * j + i] = getRoomLayoutFromNeighbours(i, j);
             }
         }
@@ -106,8 +106,8 @@ const uint8_t * Dungeon::getRoomImage(RoomWallLayoutID roomLayout)
 }
 
 void Dungeon::draw() {
-    for(uint16_t i = 0; i < width; i++) {
-        for(uint16_t j = 0; j < height; j++) {
+    for(uint16_t i = 0; i < width; ++i) {
+        for(uint16_t j = 0; j < height; ++j) {
             RoomWallLayoutID layout = this->rooms[width * j + i];
             const uint8_t * layoutImage = this->getRoomImage(layout);
             Sprites::drawSelfMasked(i * tileWidth, j * tileHeight, layoutImage, 0);
