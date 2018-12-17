@@ -64,10 +64,10 @@ namespace DungeonGenerator {
         RoomWallLayoutID getRoomLayoutFromSeed(uint16_t xpos, uint16_t ypos);
         RoomWallLayoutID getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos);
 
-        bool wallLeft(uint16_t xpos, uint16_t ypos);
-        bool wallRight(uint16_t xpos, uint16_t ypos);
-        bool wallUp(uint16_t xpos, uint16_t ypos);
-        bool wallDown(uint16_t xpos, uint16_t ypos);
+        bool hasWallLeft(uint16_t xpos, uint16_t ypos);
+        bool hasWallRight(uint16_t xpos, uint16_t ypos);
+        bool hasWallUp(uint16_t xpos, uint16_t ypos);
+        bool hasWallDown(uint16_t xpos, uint16_t ypos);
 };
 
 class Dungeon {
