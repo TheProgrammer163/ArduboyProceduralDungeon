@@ -7,140 +7,113 @@
 extern Arduboy2 arduboy;
 
 
-uint8_t Dungeon::getRoomLayoutFromSeed(int16_t xpos, int16_t ypos) {
-    int32_t currentSeed = (static_cast<int32_t>(xpos) << 16) | static_cast<int32_t>(ypos);
+RoomWallLayoutID DungeonGenerator::getRoomLayoutFromSeed(uint16_t xpos, uint16_t ypos) {
+    int32_t currentSeed = ((static_cast<int32_t>(xpos) << 16) | (static_cast<int32_t>(ypos) << 0));
     randomSeed(currentSeed);
 
-    return random(5, 10);
+    return static_cast<RoomWallLayoutID>(random(5, 10));
 }
 
-uint8_t Dungeon::getRoomLayoutFromNeighbours(int16_t xpos, int16_t ypos) {
-    bool leftRoomHasRightWall = this->wallRight(xpos-1, ypos);
-    bool rightRoomHasLeftWall = this->wallLeft(xpos+1, ypos);
-    bool aboveRoomHasDownWall = this->wallDown(xpos, ypos-1);
-    bool belowRoomHasUpperWall = this->wallUp(xpos, ypos-1);
+RoomWallLayoutID DungeonGenerator::getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos) {
+    bool leftRoomHasRightWall = DungeonGenerator::hasWallRight(xpos - 1, ypos);
+    bool rightRoomHasLeftWall = DungeonGenerator::hasWallLeft(xpos + 1, ypos);
+    bool aboveRoomHasDownWall = DungeonGenerator::hasWallDown(xpos, ypos - 1);
+    bool belowRoomHasUpperWall = DungeonGenerator::hasWallUp(xpos, ypos - 1);
 
-    uint8_t layout = 0;
+    RoomWallLayoutID layout = RoomWallLayoutID::Zero;
+	
     if (leftRoomHasRightWall) {
-        layout = layout | static_cast<uint8_t>(RoomWallLayoutID::OneLeft);
+        layout |= RoomWallLayoutID::OneLeft;
     }
     if (rightRoomHasLeftWall) {
-        layout = layout | static_cast<uint8_t>(RoomWallLayoutID::OneRight);
+        layout |= RoomWallLayoutID::OneRight;
     }
     if (aboveRoomHasDownWall) {
-        layout = layout | static_cast<uint8_t>(RoomWallLayoutID::OneUp);
+        layout |= RoomWallLayoutID::OneUp;
     }
     if (belowRoomHasUpperWall) {
-        layout = layout | static_cast<uint8_t>(RoomWallLayoutID::OneDown);
+        layout |= RoomWallLayoutID::OneDown;
     }
 
     return layout;
 }
 
 
-bool Dungeon::wallLeft(int16_t xpos, int16_t ypos) {
-    uint8_t leftRoom = Dungeon::getRoomLayoutFromSeed(xpos-1, ypos);
-    return ((leftRoom & static_cast<uint8_t>(RoomWallLayoutID::OneRight)) != 0);
+bool DungeonGenerator::hasWallLeft(uint16_t xpos, uint16_t ypos) {
+    RoomWallLayoutID leftRoom = DungeonGenerator::getRoomLayoutFromSeed(xpos - 1, ypos);
+    return ((leftRoom & RoomWallLayoutID::OneRight) != RoomWallLayoutID::Zero);
 }
-bool Dungeon::wallRight(int16_t xpos, int16_t ypos) {
-    uint8_t rightRoom = Dungeon::getRoomLayoutFromSeed(xpos+1, ypos);
-    return ((rightRoom & static_cast<uint8_t>(RoomWallLayoutID::OneLeft)) != 0);
+bool DungeonGenerator::hasWallRight(uint16_t xpos, uint16_t ypos) {
+    RoomWallLayoutID rightRoom = DungeonGenerator::getRoomLayoutFromSeed(xpos + 1, ypos);
+    return ((rightRoom & RoomWallLayoutID::OneLeft) != RoomWallLayoutID::Zero);
 }
-bool Dungeon::wallUp(int16_t xpos, int16_t ypos) {
-    uint8_t aboveRoom = Dungeon::getRoomLayoutFromSeed(xpos, ypos-1);
-    return ((aboveRoom & static_cast<uint8_t>(RoomWallLayoutID::OneDown)) != 0);
+bool DungeonGenerator::hasWallUp(uint16_t xpos, uint16_t ypos) {
+    RoomWallLayoutID aboveRoom = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos - 1);
+    return ((aboveRoom & RoomWallLayoutID::OneDown) != RoomWallLayoutID::Zero);
 }
-bool Dungeon::wallDown(int16_t xpos, int16_t ypos) {
-    uint8_t belowRoom = Dungeon::getRoomLayoutFromSeed(xpos, ypos+1);
-    return ((belowRoom & static_cast<uint8_t>(RoomWallLayoutID::OneUp)) != 0);
+bool DungeonGenerator::hasWallDown(uint16_t xpos, uint16_t ypos) {
+    RoomWallLayoutID belowRoom = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos + 1);
+    return ((belowRoom & RoomWallLayoutID::OneUp) != RoomWallLayoutID::Zero);
 }
 
 
-void Dungeon::loadRooms(int16_t xpos, int16_t ypos) {
-    for(int16_t i = xpos; i < xpos + 16; i++) {
-        for(int16_t j = ypos; j < ypos+8; j++) {
-            if (i%2 == j%2) {
-                rooms[16 * j + i] = getRoomLayoutFromSeed(i, j);
+void Dungeon::loadRooms(uint16_t xpos, uint16_t ypos) {
+    for(uint16_t i = xpos; i < xpos + width; ++i) {
+        for(uint16_t j = ypos; j < ypos + height; ++j) {
+            if ((i % 2) == (j % 2)) {
+                this->getRoomLayoutAt(i, j) = DungeonGenerator::getRoomLayoutFromSeed(i, j);
             }
-        }
-    }
-    
-    for(int16_t i = xpos; i < xpos + 16; i++) {
-        for(int16_t j = ypos; j < ypos+8; j++) {
-            if (i%2 != j%2) {
-                rooms[16 * j + i] = getRoomLayoutFromNeighbours(i, j);
+            else {
+                this->getRoomLayoutAt(i, j) = DungeonGenerator::getRoomLayoutFromNeighbours(i, j);
             }
         }
     }
 }
 
-uint8_t getRoomImage(uint8_t roomLayout) {
-    switch(roomLayout) {
-        case static_cast<uint8_t>(RoomWallLayoutID::Zero):
-            return &RoomWallLayoutData::Zero;
-            break;
-            
-        case static_cast<uint8_t>(RoomWallLayoutID::OneLeft):
-            return &RoomWallLayoutData::OneLeft;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::OneRight):
-            return &RoomWallLayoutData::OneRight;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::OneUp):
-            return &RoomWallLayoutData::OneUp;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::OneDown):
-            return &RoomWallLayoutData::OneDown;
-            break;
-            
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoLeftRight):
-            return &RoomWallLayoutData::TwoLeftRight;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoLeftUp):
-            return &RoomWallLayoutData::TwoLeftUp;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoLeftDown):
-            return &RoomWallLayoutData::TwoLeftDown;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoUpDown):
-            return &RoomWallLayoutData::TwoUpDown;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoRightUp):
-            return &RoomWallLayoutData::TwoRightUp;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoRightDown):
-            return &RoomWallLayoutData::TwoRightDown;
-            break;
+const uint8_t * const roomLookup[] PROGMEM =
+{
+	RoomWallLayoutData::Zero,
+	RoomWallLayoutData::OneDown,
+	RoomWallLayoutData::OneUp,
+	RoomWallLayoutData::TwoUpDown,
+	RoomWallLayoutData::OneRight,
+	RoomWallLayoutData::TwoRightDown,
+	RoomWallLayoutData::TwoRightUp,
+	RoomWallLayoutData::ThreeRightUpDown,
+	RoomWallLayoutData::OneLeft,
+	RoomWallLayoutData::TwoLeftDown,
+	RoomWallLayoutData::TwoLeftUp,
+	RoomWallLayoutData::ThreeLeftUpDown,
+	RoomWallLayoutData::TwoLeftRight,
+	RoomWallLayoutData::ThreeLeftRightDown,
+	RoomWallLayoutData::ThreeLeftRightUp,
+	RoomWallLayoutData::Four,
+};
 
-        case static_cast<uint8_t>(RoomWallLayoutID::ThreeLeftRightDown):
-            return &RoomWallLayoutData::ThreeLeftRightDown;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::ThreeLeftRightUp):
-            return &RoomWallLayoutData::ThreeLeftRightUp;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::ThreeLeftUpDown):
-            return &RoomWallLayoutData::ThreeLeftUpDown;
-            break;
-        case static_cast<uint8_t>(RoomWallLayoutID::ThreeRightUpDown):
-            return &RoomWallLayoutData::ThreeRightUpDown;
-            break;
-            
-        case static_cast<uint8_t>(RoomWallLayoutID::Four):
-            return &RoomWallLayoutData::Four;
-            break;
-    }
+const uint8_t * Dungeon::getRoomImage(RoomWallLayoutID roomLayout)
+{
+	const uint8_t index = static_cast<uint8_t>(roomLayout);
+	
+	if(index >= 0x10)
+		return nullptr;
+		
+	return reinterpret_cast<const uint8_t *>(pgm_read_ptr(&roomLookup[index]));
 }
 
 void Dungeon::draw() {
-    for(int16_t i = 0; i < 16; i++) {
-        for(int16_t j = 0; j < 8; j++) {
-            uint8_t layout = this->rooms[16 * j + i];
-            uint8_t layoutImage = this->getRoomImage(layout);
-            Sprites::drawSelfMasked((i)*8, (j)*8, layoutImage, 0);
+    for(uint16_t i = 0; i < width; ++i) {
+        for(uint16_t j = 0; j < height; ++j) {
+            RoomWallLayoutID layout = this->getRoomLayoutAt(i, j);
+            const uint8_t * layoutImage = this->getRoomImage(layout);
+            Sprites::drawSelfMasked(i * tileWidth, j * tileHeight, layoutImage, 0);
         }
     }
 }
 
+RoomWallLayoutID & Dungeon::getRoomLayoutAt(uint16_t xpos, uint16_t ypos)
+{
+	return this->rooms[(ypos * width) + xpos];
+}
 
 
 
