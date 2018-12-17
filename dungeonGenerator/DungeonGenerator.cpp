@@ -74,59 +74,60 @@ void Dungeon::loadRooms(int16_t xpos, int16_t ypos) {
     }
 }
 
-uint8_t getRoomImage(uint8_t roomLayout) {
-    switch(roomLayout) {
-        case static_cast<uint8_t>(RoomWallLayoutID::Zero):
-            return &RoomWallLayoutData::Zero;
+const uint8_t * Dungeon::getRoomImage(uint8_t roomLayout) {
+    RoomWallLayoutID layout = static_cast<RoomWallLayoutID>(roomLayout);
+    switch(layout) {
+        case RoomWallLayoutID::Zero:
+            return &RoomWallLayoutData::Zero[0];
             break;
             
-        case static_cast<uint8_t>(RoomWallLayoutID::OneLeft):
-            return &RoomWallLayoutData::OneLeft;
+        case RoomWallLayoutID::OneLeft:
+            return &RoomWallLayoutData::OneLeft[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::OneRight):
-            return &RoomWallLayoutData::OneRight;
+        case RoomWallLayoutID::OneRight:
+            return &RoomWallLayoutData::OneRight[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::OneUp):
-            return &RoomWallLayoutData::OneUp;
+        case RoomWallLayoutID::OneUp:
+            return &RoomWallLayoutData::OneUp[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::OneDown):
-            return &RoomWallLayoutData::OneDown;
+        case RoomWallLayoutID::OneDown:
+            return &RoomWallLayoutData::OneDown[0];
             break;
             
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoLeftRight):
-            return &RoomWallLayoutData::TwoLeftRight;
+        case RoomWallLayoutID::TwoLeftRight:
+            return &RoomWallLayoutData::TwoLeftRight[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoLeftUp):
-            return &RoomWallLayoutData::TwoLeftUp;
+        case RoomWallLayoutID::TwoLeftUp:
+            return &RoomWallLayoutData::TwoLeftUp[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoLeftDown):
-            return &RoomWallLayoutData::TwoLeftDown;
+        case RoomWallLayoutID::TwoLeftDown:
+            return &RoomWallLayoutData::TwoLeftDown[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoUpDown):
-            return &RoomWallLayoutData::TwoUpDown;
+        case RoomWallLayoutID::TwoUpDown:
+            return &RoomWallLayoutData::TwoUpDown[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoRightUp):
-            return &RoomWallLayoutData::TwoRightUp;
+        case RoomWallLayoutID::TwoRightUp:
+            return &RoomWallLayoutData::TwoRightUp[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::TwoRightDown):
-            return &RoomWallLayoutData::TwoRightDown;
+        case RoomWallLayoutID::TwoRightDown:
+            return &RoomWallLayoutData::TwoRightDown[0];
             break;
 
-        case static_cast<uint8_t>(RoomWallLayoutID::ThreeLeftRightDown):
-            return &RoomWallLayoutData::ThreeLeftRightDown;
+        case RoomWallLayoutID::ThreeLeftRightDown:
+            return &RoomWallLayoutData::ThreeLeftRightDown[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::ThreeLeftRightUp):
-            return &RoomWallLayoutData::ThreeLeftRightUp;
+        case RoomWallLayoutID::ThreeLeftRightUp:
+            return &RoomWallLayoutData::ThreeLeftRightUp[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::ThreeLeftUpDown):
-            return &RoomWallLayoutData::ThreeLeftUpDown;
+        case RoomWallLayoutID::ThreeLeftUpDown:
+            return &RoomWallLayoutData::ThreeLeftUpDown[0];
             break;
-        case static_cast<uint8_t>(RoomWallLayoutID::ThreeRightUpDown):
-            return &RoomWallLayoutData::ThreeRightUpDown;
+        case RoomWallLayoutID::ThreeRightUpDown:
+            return &RoomWallLayoutData::ThreeRightUpDown[0];
             break;
             
-        case static_cast<uint8_t>(RoomWallLayoutID::Four):
-            return &RoomWallLayoutData::Four;
+        case RoomWallLayoutID::Four:
+            return &RoomWallLayoutData::Four[0];
             break;
     }
 }
@@ -135,7 +136,7 @@ void Dungeon::draw() {
     for(int16_t i = 0; i < 16; i++) {
         for(int16_t j = 0; j < 8; j++) {
             uint8_t layout = this->rooms[16 * j + i];
-            uint8_t layoutImage = this->getRoomImage(layout);
+            const uint8_t * layoutImage = this->getRoomImage(layout);
             Sprites::drawSelfMasked((i)*8, (j)*8, layoutImage, 0);
         }
     }

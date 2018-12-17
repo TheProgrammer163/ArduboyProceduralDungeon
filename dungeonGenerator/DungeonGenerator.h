@@ -41,7 +41,7 @@ class Dungeon {
         bool wallDown(int16_t xpos, int16_t ypos);
         void loadRooms(int16_t xpos, int16_t ypos);
         void draw();
-        uint8_t getRoomImage(uint8_t roomLayout);
+        const uint8_t * getRoomImage(uint8_t roomLayout);
 };
 
 
