@@ -74,62 +74,32 @@ void Dungeon::loadRooms(int16_t xpos, int16_t ypos) {
     }
 }
 
-const uint8_t * Dungeon::getRoomImage(uint8_t roomLayout) {
-    RoomWallLayoutID layout = static_cast<RoomWallLayoutID>(roomLayout);
-    switch(layout) {
-        case RoomWallLayoutID::Zero:
-            return &RoomWallLayoutData::Zero[0];
-            break;
-            
-        case RoomWallLayoutID::OneLeft:
-            return &RoomWallLayoutData::OneLeft[0];
-            break;
-        case RoomWallLayoutID::OneRight:
-            return &RoomWallLayoutData::OneRight[0];
-            break;
-        case RoomWallLayoutID::OneUp:
-            return &RoomWallLayoutData::OneUp[0];
-            break;
-        case RoomWallLayoutID::OneDown:
-            return &RoomWallLayoutData::OneDown[0];
-            break;
-            
-        case RoomWallLayoutID::TwoLeftRight:
-            return &RoomWallLayoutData::TwoLeftRight[0];
-            break;
-        case RoomWallLayoutID::TwoLeftUp:
-            return &RoomWallLayoutData::TwoLeftUp[0];
-            break;
-        case RoomWallLayoutID::TwoLeftDown:
-            return &RoomWallLayoutData::TwoLeftDown[0];
-            break;
-        case RoomWallLayoutID::TwoUpDown:
-            return &RoomWallLayoutData::TwoUpDown[0];
-            break;
-        case RoomWallLayoutID::TwoRightUp:
-            return &RoomWallLayoutData::TwoRightUp[0];
-            break;
-        case RoomWallLayoutID::TwoRightDown:
-            return &RoomWallLayoutData::TwoRightDown[0];
-            break;
+const uint8_t * const roomLookup[] PROGMEM =
+{
+	RoomWallLayoutData::Zero,
+	RoomWallLayoutData::OneDown,
+	RoomWallLayoutData::OneUp,
+	RoomWallLayoutData::TwoUpDown,
+	RoomWallLayoutData::OneRight,
+	RoomWallLayoutData::TwoRightDown,
+	RoomWallLayoutData::TwoRightUp,
+	RoomWallLayoutData::ThreeRightUpDown,
+	RoomWallLayoutData::OneLeft,
+	RoomWallLayoutData::TwoLeftDown,
+	RoomWallLayoutData::TwoLeftUp,
+	RoomWallLayoutData::ThreeLeftUpDown,
+	RoomWallLayoutData::TwoLeftRight,
+	RoomWallLayoutData::ThreeLeftRightDown,
+	RoomWallLayoutData::ThreeLeftRightUp,
+	RoomWallLayoutData::Four,
+};
 
-        case RoomWallLayoutID::ThreeLeftRightDown:
-            return &RoomWallLayoutData::ThreeLeftRightDown[0];
-            break;
-        case RoomWallLayoutID::ThreeLeftRightUp:
-            return &RoomWallLayoutData::ThreeLeftRightUp[0];
-            break;
-        case RoomWallLayoutID::ThreeLeftUpDown:
-            return &RoomWallLayoutData::ThreeLeftUpDown[0];
-            break;
-        case RoomWallLayoutID::ThreeRightUpDown:
-            return &RoomWallLayoutData::ThreeRightUpDown[0];
-            break;
-            
-        case RoomWallLayoutID::Four:
-            return &RoomWallLayoutData::Four[0];
-            break;
-    }
+const uint8_t * Dungeon::getRoomImage(uint8_t roomLayout)
+{
+	if(roomLayout >= 0x10)
+		return nullptr;
+		
+	return reinterpret_cast<const uint8_t *>(pgm_read_ptr(&roomLookup[roomLayout]));
 }
 
 void Dungeon::draw() {
