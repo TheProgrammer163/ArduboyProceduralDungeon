@@ -70,16 +70,16 @@ class Dungeon {
         static constexpr uint8_t roomCount = width * height;
     public:
         RoomWallLayoutID rooms[roomCount] = {};
-        int16_t x = 0;
-        int16_t y = 0;
+        uint16_t x = 0;
+        uint16_t y = 0;
     public:
-        RoomWallLayoutID getRoomLayoutFromSeed(int16_t xpos, int16_t ypos);
-        RoomWallLayoutID getRoomLayoutFromNeighbours(int16_t xpos, int16_t ypos);
-        bool wallLeft(int16_t xpos, int16_t ypos);
-        bool wallRight(int16_t xpos, int16_t ypos);
-        bool wallUp(int16_t xpos, int16_t ypos);
-        bool wallDown(int16_t xpos, int16_t ypos);
-        void loadRooms(int16_t xpos, int16_t ypos);
+        RoomWallLayoutID getRoomLayoutFromSeed(uint16_t xpos, uint16_t ypos);
+        RoomWallLayoutID getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos);
+        bool wallLeft(uint16_t xpos, uint16_t ypos);
+        bool wallRight(uint16_t xpos, uint16_t ypos);
+        bool wallUp(uint16_t xpos, uint16_t ypos);
+        bool wallDown(uint16_t xpos, uint16_t ypos);
+        void loadRooms(uint16_t xpos, uint16_t ypos);
         void draw();
         const uint8_t * getRoomImage(RoomWallLayoutID roomLayout);
 };
