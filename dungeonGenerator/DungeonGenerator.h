@@ -62,7 +62,14 @@ inline RoomWallLayoutID & operator ^=(RoomWallLayoutID & left, RoomWallLayoutID 
 
 class Dungeon {
     public:
-        RoomWallLayoutID rooms[16*8] = {};
+        static constexpr uint8_t tileWidth = 8;
+        static constexpr uint8_t tileHeight = 8;
+
+        static constexpr uint8_t width = 16;
+        static constexpr uint8_t height = 8;
+        static constexpr uint8_t roomCount = width * height;
+    public:
+        RoomWallLayoutID rooms[roomCount] = {};
         int16_t x = 0;
         int16_t y = 0;
     public:

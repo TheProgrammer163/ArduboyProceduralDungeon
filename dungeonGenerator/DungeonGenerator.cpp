@@ -58,18 +58,18 @@ bool Dungeon::wallDown(int16_t xpos, int16_t ypos) {
 
 
 void Dungeon::loadRooms(int16_t xpos, int16_t ypos) {
-    for(int16_t i = xpos; i < xpos + 16; i++) {
-        for(int16_t j = ypos; j < ypos+8; j++) {
+    for(int16_t i = xpos; i < xpos + width; i++) {
+        for(int16_t j = ypos; j < ypos + height; j++) {
             if (i%2 == j%2) {
-                rooms[16 * j + i] = getRoomLayoutFromSeed(i, j);
+                rooms[width * j + i] = getRoomLayoutFromSeed(i, j);
             }
         }
     }
     
-    for(int16_t i = xpos; i < xpos + 16; i++) {
-        for(int16_t j = ypos; j < ypos+8; j++) {
+    for(int16_t i = xpos; i < xpos + width; i++) {
+        for(int16_t j = ypos; j < ypos + height; j++) {
             if (i%2 != j%2) {
-                rooms[16 * j + i] = getRoomLayoutFromNeighbours(i, j);
+                rooms[width * j + i] = getRoomLayoutFromNeighbours(i, j);
             }
         }
     }
@@ -106,11 +106,11 @@ const uint8_t * Dungeon::getRoomImage(RoomWallLayoutID roomLayout)
 }
 
 void Dungeon::draw() {
-    for(int16_t i = 0; i < 16; i++) {
-        for(int16_t j = 0; j < 8; j++) {
-            RoomWallLayoutID layout = this->rooms[16 * j + i];
+    for(int16_t i = 0; i < width; i++) {
+        for(int16_t j = 0; j < height; j++) {
+            RoomWallLayoutID layout = this->rooms[width * j + i];
             const uint8_t * layoutImage = this->getRoomImage(layout);
-            Sprites::drawSelfMasked((i)*8, (j)*8, layoutImage, 0);
+            Sprites::drawSelfMasked(i * tileWidth, j * tileHeight, layoutImage, 0);
         }
     }
 }
