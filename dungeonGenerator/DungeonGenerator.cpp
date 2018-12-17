@@ -7,18 +7,18 @@
 extern Arduboy2 arduboy;
 
 
-RoomWallLayoutID Dungeon::getRoomLayoutFromSeed(uint16_t xpos, uint16_t ypos) {
+RoomWallLayoutID DungeonGenerator::getRoomLayoutFromSeed(uint16_t xpos, uint16_t ypos) {
     int32_t currentSeed = ((static_cast<int32_t>(xpos) << 16) | (static_cast<int32_t>(ypos) << 0));
     randomSeed(currentSeed);
 
     return static_cast<RoomWallLayoutID>(random(5, 10));
 }
 
-RoomWallLayoutID Dungeon::getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos) {
-    bool leftRoomHasRightWall = this->wallRight(xpos-1, ypos);
-    bool rightRoomHasLeftWall = this->wallLeft(xpos+1, ypos);
-    bool aboveRoomHasDownWall = this->wallDown(xpos, ypos-1);
-    bool belowRoomHasUpperWall = this->wallUp(xpos, ypos-1);
+RoomWallLayoutID DungeonGenerator::getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos) {
+    bool leftRoomHasRightWall = DungeonGenerator::wallRight(xpos-1, ypos);
+    bool rightRoomHasLeftWall = DungeonGenerator::wallLeft(xpos+1, ypos);
+    bool aboveRoomHasDownWall = DungeonGenerator::wallDown(xpos, ypos-1);
+    bool belowRoomHasUpperWall = DungeonGenerator::wallUp(xpos, ypos-1);
 
     RoomWallLayoutID layout = RoomWallLayoutID::Zero;
 	
@@ -39,20 +39,20 @@ RoomWallLayoutID Dungeon::getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t yp
 }
 
 
-bool Dungeon::wallLeft(uint16_t xpos, uint16_t ypos) {
-    RoomWallLayoutID leftRoom = Dungeon::getRoomLayoutFromSeed(xpos-1, ypos);
+bool DungeonGenerator::wallLeft(uint16_t xpos, uint16_t ypos) {
+    RoomWallLayoutID leftRoom = DungeonGenerator::getRoomLayoutFromSeed(xpos-1, ypos);
     return ((leftRoom & RoomWallLayoutID::OneRight) != RoomWallLayoutID::Zero);
 }
-bool Dungeon::wallRight(uint16_t xpos, uint16_t ypos) {
-    RoomWallLayoutID rightRoom = Dungeon::getRoomLayoutFromSeed(xpos+1, ypos);
+bool DungeonGenerator::wallRight(uint16_t xpos, uint16_t ypos) {
+    RoomWallLayoutID rightRoom = DungeonGenerator::getRoomLayoutFromSeed(xpos+1, ypos);
     return ((rightRoom & RoomWallLayoutID::OneLeft) != RoomWallLayoutID::Zero);
 }
-bool Dungeon::wallUp(uint16_t xpos, uint16_t ypos) {
-    RoomWallLayoutID aboveRoom = Dungeon::getRoomLayoutFromSeed(xpos, ypos-1);
+bool DungeonGenerator::wallUp(uint16_t xpos, uint16_t ypos) {
+    RoomWallLayoutID aboveRoom = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos-1);
     return ((aboveRoom & RoomWallLayoutID::OneDown) != RoomWallLayoutID::Zero);
 }
-bool Dungeon::wallDown(uint16_t xpos, uint16_t ypos) {
-    RoomWallLayoutID belowRoom = Dungeon::getRoomLayoutFromSeed(xpos, ypos+1);
+bool DungeonGenerator::wallDown(uint16_t xpos, uint16_t ypos) {
+    RoomWallLayoutID belowRoom = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos+1);
     return ((belowRoom & RoomWallLayoutID::OneUp) != RoomWallLayoutID::Zero);
 }
 
@@ -61,10 +61,10 @@ void Dungeon::loadRooms(uint16_t xpos, uint16_t ypos) {
     for(uint16_t i = xpos; i < xpos + width; ++i) {
         for(uint16_t j = ypos; j < ypos + height; ++j) {
             if ((i % 2) == (j % 2)) {
-                this->getRoomLayoutAt(i, j) = getRoomLayoutFromSeed(i, j);
+                this->getRoomLayoutAt(i, j) = DungeonGenerator::getRoomLayoutFromSeed(i, j);
             }
             else {
-                this->getRoomLayoutAt(i, j) = getRoomLayoutFromNeighbours(i, j);
+                this->getRoomLayoutAt(i, j) = DungeonGenerator::getRoomLayoutFromNeighbours(i, j);
             }
         }
     }

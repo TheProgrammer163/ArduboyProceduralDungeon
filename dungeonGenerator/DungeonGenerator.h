@@ -60,6 +60,16 @@ inline RoomWallLayoutID & operator ^=(RoomWallLayoutID & left, RoomWallLayoutID 
 	return left;
 }
 
+namespace DungeonGenerator {
+        RoomWallLayoutID getRoomLayoutFromSeed(uint16_t xpos, uint16_t ypos);
+        RoomWallLayoutID getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos);
+
+        bool wallLeft(uint16_t xpos, uint16_t ypos);
+        bool wallRight(uint16_t xpos, uint16_t ypos);
+        bool wallUp(uint16_t xpos, uint16_t ypos);
+        bool wallDown(uint16_t xpos, uint16_t ypos);
+};
+
 class Dungeon {
     public:
         static constexpr uint8_t tileWidth = 8;
@@ -73,12 +83,6 @@ class Dungeon {
         uint16_t x = 0;
         uint16_t y = 0;
     public:
-        RoomWallLayoutID getRoomLayoutFromSeed(uint16_t xpos, uint16_t ypos);
-        RoomWallLayoutID getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos);
-        bool wallLeft(uint16_t xpos, uint16_t ypos);
-        bool wallRight(uint16_t xpos, uint16_t ypos);
-        bool wallUp(uint16_t xpos, uint16_t ypos);
-        bool wallDown(uint16_t xpos, uint16_t ypos);
         void loadRooms(uint16_t xpos, uint16_t ypos);
         void draw();
         const uint8_t * getRoomImage(RoomWallLayoutID roomLayout);
