@@ -23,10 +23,10 @@ RoomWallLayoutID DungeonGenerator::getRoomLayoutFromSeed(uint16_t xpos, uint16_t
 }
 
 RoomWallLayoutID DungeonGenerator::getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos) {
-    bool leftRoomHasRightWall = DungeonGenerator::hasWallRight(xpos - 1, ypos);
-    bool rightRoomHasLeftWall = DungeonGenerator::hasWallLeft(xpos + 1, ypos);
-    bool aboveRoomHasDownWall = DungeonGenerator::hasWallDown(xpos, ypos - 1);
-    bool belowRoomHasUpperWall = DungeonGenerator::hasWallUp(xpos, ypos + 1);
+    bool leftRoomHasRightWall = (xpos == 0) || DungeonGenerator::hasWallRight(xpos - 1, ypos);
+    bool rightRoomHasLeftWall = (xpos == (Dungeon::width - 1)) || DungeonGenerator::hasWallLeft(xpos + 1, ypos);
+    bool aboveRoomHasDownWall = (ypos == 0) || DungeonGenerator::hasWallDown(xpos, ypos - 1);
+    bool belowRoomHasUpperWall = (ypos == (Dungeon::height - 1)) || DungeonGenerator::hasWallUp(xpos, ypos + 1);
 
     RoomWallLayoutID layout = RoomWallLayoutID::Zero;
 	
