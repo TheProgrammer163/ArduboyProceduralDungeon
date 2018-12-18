@@ -13,7 +13,7 @@ RoomWallLayoutID DungeonGenerator::getRoomLayoutFromSeed(uint16_t xpos, uint16_t
     xSeed = (xSeed*100*100)/1337;
     ySeed = (ySeed*100*100)/501;
     uint32_t currentSeed = ((xSeed << 16) | (ySeed << 0));
-    randomSeed(currentSeed);
+    randomSeed((currentSeed > 0) ? currentSeed : 1);
 
     return static_cast<RoomWallLayoutID>(random(0, 15));
     
