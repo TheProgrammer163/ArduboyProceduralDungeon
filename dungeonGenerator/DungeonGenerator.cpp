@@ -13,7 +13,7 @@ RoomWallLayoutID DungeonGenerator::getRoomLayoutFromSeed(uint16_t xpos, uint16_t
     xSeed = (xSeed*100*100)/1337;
     ySeed = (ySeed*100*100)/501;
     uint32_t currentSeed = ((xSeed << 16) | (ySeed << 0));
-    randomSeed(currentSeed);
+    randomSeed((currentSeed > 0) ? currentSeed : 1);
 
     return static_cast<RoomWallLayoutID>(random(0, 15));
     
@@ -23,10 +23,10 @@ RoomWallLayoutID DungeonGenerator::getRoomLayoutFromSeed(uint16_t xpos, uint16_t
 }
 
 RoomWallLayoutID DungeonGenerator::getRoomLayoutFromNeighbours(uint16_t xpos, uint16_t ypos) {
-    bool leftRoomHasRightWall = DungeonGenerator::hasWallRight(xpos - 1, ypos);
-    bool rightRoomHasLeftWall = DungeonGenerator::hasWallLeft(xpos + 1, ypos);
-    bool aboveRoomHasDownWall = DungeonGenerator::hasWallDown(xpos, ypos - 1);
-    bool belowRoomHasUpperWall = DungeonGenerator::hasWallUp(xpos, ypos + 1);
+    bool leftRoomHasRightWall = (xpos == 0) || DungeonGenerator::hasWallRight(xpos - 1, ypos);
+    bool rightRoomHasLeftWall = (xpos == (Dungeon::width - 1)) || DungeonGenerator::hasWallLeft(xpos + 1, ypos);
+    bool aboveRoomHasDownWall = (ypos == 0) || DungeonGenerator::hasWallDown(xpos, ypos - 1);
+    bool belowRoomHasUpperWall = (ypos == (Dungeon::height - 1)) || DungeonGenerator::hasWallUp(xpos, ypos + 1);
 
     RoomWallLayoutID layout = RoomWallLayoutID::Zero;
 	
@@ -48,19 +48,19 @@ RoomWallLayoutID DungeonGenerator::getRoomLayoutFromNeighbours(uint16_t xpos, ui
 
 
 bool DungeonGenerator::hasWallLeft(uint16_t xpos, uint16_t ypos) {
-    RoomWallLayoutID room = DungeonGenerator::getRoomLayoutFromSeed(xpos - 1, ypos);
+    RoomWallLayoutID room = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos);
     return ((room & RoomWallLayoutID::OneLeft) != RoomWallLayoutID::Zero);
 }
 bool DungeonGenerator::hasWallRight(uint16_t xpos, uint16_t ypos) {
-    RoomWallLayoutID room = DungeonGenerator::getRoomLayoutFromSeed(xpos + 1, ypos);
+    RoomWallLayoutID room = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos);
     return ((room & RoomWallLayoutID::OneRight) != RoomWallLayoutID::Zero);
 }
 bool DungeonGenerator::hasWallUp(uint16_t xpos, uint16_t ypos) {
-    RoomWallLayoutID room = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos - 1);
+    RoomWallLayoutID room = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos);
     return ((room & RoomWallLayoutID::OneUp) != RoomWallLayoutID::Zero);
 }
 bool DungeonGenerator::hasWallDown(uint16_t xpos, uint16_t ypos) {
-    RoomWallLayoutID room = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos + 1);
+    RoomWallLayoutID room = DungeonGenerator::getRoomLayoutFromSeed(xpos, ypos);
     return ((room & RoomWallLayoutID::OneDown) != RoomWallLayoutID::Zero);
 }
 
